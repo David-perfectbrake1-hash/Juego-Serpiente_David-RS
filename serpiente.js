@@ -24,6 +24,7 @@
     function dibujarTablero(){
       dibujarLineasVerticales()
       dibujarLineasHorizontales()
+      enumerarCeldas()
     }
 
     function dibujarLineasVerticales(){
@@ -45,6 +46,5 @@
         ctx.stroke()
       }
     }
-
 
 
