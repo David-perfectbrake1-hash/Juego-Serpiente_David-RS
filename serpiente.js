@@ -12,27 +12,34 @@
     // FUNCIONES DE DIBUJO
     // =========================
 
-    function limpiarCanvas() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-
     function dibujarTodo() {
       limpiarCanvas();
       dibujarTablero()
     }
 
+    function limpiarCanvas() {
+    //0, 0: Empieza a borrar desde la esquina superior izquierda (la coordenada de origen).
+    //canvas.width, canvas.height: Borra hasta el ancho y alto total del canvas.
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
     function dibujarTablero(){
       dibujarLineasVerticales()
       dibujarLineasHorizontales()
-      enumerarCeldas()
     }
 
     function dibujarLineasVerticales(){
+    // Recorremos el ancho(width) del canvas en saltos definidos por TAMANIO_CELDA
       for (let x = 0; x <= canvas.width; x += TAMANIO_CELDA) {
         ctx.strokeStyle="white"
+      //Levantamos el lápiz para empezar una lista de coordenadas totalmente nueva.
         ctx.beginPath()
+      //Ubícate en la columna x (que va saltando de 25 en 25), 
+      // pero siempre empieza desde arriba del todo (punto 0 en Y)
         ctx.moveTo(x,0)
+      //Traza una ruta invisible hacia abajo
         ctx.lineTo(x,canvas.height)
+      // Dibujamos físicamente la línea en el canvas
         ctx.stroke()
       }
     }
