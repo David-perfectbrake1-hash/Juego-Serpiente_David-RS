@@ -5,6 +5,29 @@
 
     const TAMANIO_CELDA = 25
 
+    const serpiente = [
+      {
+        x: 14,
+        y: 13
+      },
+      {
+        x: 14,
+        y: 14
+      },
+      {
+        x: 14,
+        y: 15
+      },
+      {
+        x: 14,
+        y: 16
+      },
+      {
+        x: 14,
+        y: 17
+      }
+    ]
+
     // Primera pintura del juego al cargar la página
     dibujarTodo();
 
@@ -15,7 +38,8 @@
     function dibujarTodo() {
       limpiarCanvas();
       dibujarTablero()
-      pintarCoordenada(25,25)
+      // pintarCoordenada(25,25)
+      dibujarSerpiente()
 
     }
 
@@ -78,14 +102,134 @@
       }
   }
 
-  function pintarCoordenada(x,y){
+  function pintarCoordenada(x,y,color){
     let posicionX = x * TAMANIO_CELDA
     let posicionY = y * TAMANIO_CELDA
+
       if (posicionX < canvas.width && posicionY < canvas.height){
-        ctx.fillStyle="yellow"
+        ctx.fillStyle=color
         ctx.fillRect(posicionX, posicionY, TAMANIO_CELDA, TAMANIO_CELDA)
 
         ctx.strokeStyle="red"
         ctx.strokeRect(posicionX, posicionY, TAMANIO_CELDA, TAMANIO_CELDA)
       }
   }
+
+function dibujarSerpiente(){
+  let colorCabeza = "red"
+  for(let i = 0; i < serpiente.length ; i++){
+    let serp = serpiente[i]
+    if(i == 0){
+      pintarCoordenada(serp.x, serp.y, colorCabeza)
+    } else {
+      pintarCoordenada(serp.x, serp.y, "yellow")
+    }
+  }
+}
+
+function moverDerecha(){
+  let posicionAnterior = {x: 0, y: 0}
+  if((serpiente[0].x+2)*TAMANIO_CELDA > canvas.width) 
+    return
+  for(let i = 0; i < serpiente.length ; i++){
+    let posicionX = serpiente[i].x
+    let posicionY = serpiente[i].y
+    if(i == 0){
+      serpiente[i].x = serpiente[i].x + 1
+    } else {
+      serpiente[i].x = posicionAnterior.x
+      serpiente[i].y = posicionAnterior.y
+    }
+    posicionAnterior.x = posicionX
+    posicionAnterior.y = posicionY
+  }
+}
+
+function moverIzquierda(){
+  let posicionAnterior = {x: 0, y: 0}
+  if((serpiente[0].x-1)*TAMANIO_CELDA < 0) 
+    return
+  for(let i = 0; i < serpiente.length ; i++){
+    let posicionX = serpiente[i].x
+    let posicionY = serpiente[i].y
+    if(i == 0){
+      serpiente[i].x = serpiente[i].x - 1
+    } else {
+      serpiente[i].x = posicionAnterior.x
+      serpiente[i].y = posicionAnterior.y
+    }
+    posicionAnterior.x = posicionX
+    posicionAnterior.y = posicionY
+  }
+}
+
+function moverAbajo(){
+  let posicionAnterior = {x: 0, y: 0}
+  if((serpiente[0].y+2)*TAMANIO_CELDA > canvas.height) 
+    return
+  for(let i = 0; i < serpiente.length ; i++){
+    let posicionX = serpiente[i].x
+    let posicionY = serpiente[i].y
+    if(i == 0){
+      serpiente[i].y = serpiente[i].y + 1
+    } else {
+      serpiente[i].x = posicionAnterior.x
+      serpiente[i].y = posicionAnterior.y
+    }
+    posicionAnterior.x = posicionX
+    posicionAnterior.y = posicionY
+  }
+}
+
+function moverArriba(){
+  let posicionAnterior = {x: 0, y: 0}
+  if((serpiente[0].y-1)*TAMANIO_CELDA < 0) 
+    return
+  for(let i = 0; i < serpiente.length ; i++){
+    let posicionX = serpiente[i].x
+    let posicionY = serpiente[i].y
+    if(i == 0){
+      serpiente[i].y = serpiente[i].y - 1
+    } else {
+      serpiente[i].x = posicionAnterior.x
+      serpiente[i].y = posicionAnterior.y
+    }
+    posicionAnterior.x = posicionX
+    posicionAnterior.y = posicionY
+  }
+}
+
+function cambiarDireccion(direccion){
+  switch(direccion){
+    case "derecha":
+      moverDerecha()
+      break
+    case "izquierda":
+      moverIzquierda()
+      break
+    case "abajo":
+      moverAbajo()
+      break
+    case "arriba":
+      moverArriba()
+      break
+  }
+  dibujarTodo()
+}
+
+window.addEventListener("keydown", (evento) => {
+  switch (evento.key) {
+    case "ArrowRight":
+      cambiarDireccion("derecha");
+      break;
+    case "ArrowLeft":
+      cambiarDireccion("izquierda");
+      break;
+    case "ArrowUp":
+      cambiarDireccion("arriba");
+      break;
+    case "ArrowDown":
+      cambiarDireccion("abajo");
+      break;
+  }
+});
