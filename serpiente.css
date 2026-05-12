@@ -68,7 +68,9 @@ h1 {
 
 canvas {
     width: 100%;
-    max-width: 500px;
+/* Define el tamaño máximo visual en pantalla para que no se vea estirado ni borroso */
+/* Debe coincidir o ser mayor al width="xxx" que pusiste en el HTML */
+    max-width: 650px;
     background: #000000;
     border: 4px solid #00ff5e;
     border-radius: 16px;
