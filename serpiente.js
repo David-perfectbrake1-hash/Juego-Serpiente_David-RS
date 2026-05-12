@@ -15,6 +15,8 @@
     function dibujarTodo() {
       limpiarCanvas();
       dibujarTablero()
+      pintarCoordenada(25,25)
+
     }
 
     function limpiarCanvas() {
@@ -26,6 +28,8 @@
     function dibujarTablero(){
       dibujarLineasVerticales()
       dibujarLineasHorizontales()
+      dibujarNumerosEnY()
+      dibujarNumerosEnX()
     }
 
     function dibujarLineasVerticales(){
@@ -54,4 +58,34 @@
       }
     }
 
+  function dibujarNumerosEnY(){
+    ctx.fillStyle="white"
+    ctx.font="12px Arial"
+    let contador = 0
+      for (let y = 0; y <= canvas.height; y += TAMANIO_CELDA) {
+        ctx.fillText(contador,5,y+12)
+        contador++
+      }
+  }
 
+    function dibujarNumerosEnX(){
+    ctx.fillStyle="white"
+    ctx.font="12px Arial"
+    let contador = 0
+      for (let x = 0; x <= canvas.width; x += TAMANIO_CELDA) {
+        ctx.fillText(contador,x+2,12)
+        contador++
+      }
+  }
+
+  function pintarCoordenada(x,y){
+    let posicionX = x * TAMANIO_CELDA
+    let posicionY = y * TAMANIO_CELDA
+      if (posicionX < canvas.width && posicionY < canvas.height){
+        ctx.fillStyle="yellow"
+        ctx.fillRect(posicionX, posicionY, TAMANIO_CELDA, TAMANIO_CELDA)
+
+        ctx.strokeStyle="red"
+        ctx.strokeRect(posicionX, posicionY, TAMANIO_CELDA, TAMANIO_CELDA)
+      }
+  }
