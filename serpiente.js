@@ -22,7 +22,7 @@ const serpiente = [
 let intervaloSerpiente;
 let direccionActual = "derecha";
 
-let comida = { x: 5, y: 5 };
+let comida = { x: 4, y: 4 };
 
 let puntaje = 0
 
@@ -45,6 +45,13 @@ function dibujarTodo() {
   // pintarCoordenada(25, 25); // Debug
   dibujarComida()
   dibujarSerpiente();
+  //PRUEBAS IMPLEMENTADAS
+  pintarCoordenada(5, 5, "orange")  
+  pintarCoordenada(10, 2, "orange") 
+  pintarCoordenada(0, 25, "orange")  
+  pintarCoordenada(25, 10, "orange") 
+  pintarCoordenada(0, 10, "orange")  
+  pintarCoordenada(25, 25, "orange")
 }
 
 /**

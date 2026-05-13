@@ -4,6 +4,7 @@ const ctx = canvas.getContext("2d")
 let serpiente = [{x: 10, y: 10}]
 let intervaloSerpiente
 let direccion = "derecha"
+let comida = {x: 5,y: 5}
 function pintarCoordenada(x,y,color){
     let pixelX = x*TAMANIO_CELDA
     let pixelY = y*TAMANIO_CELDA
@@ -23,6 +24,7 @@ function dibujarSerpiente(){
 function dibujarTodo(){
     limpiarCanvas()
     dibujarSerpiente()
+    dibujarComida()
 }
 function moverDerecha(){
     let nuevaCabeza = {
@@ -61,19 +63,27 @@ intervaloSerpiente = setInterval(()=>{
     dibujarTodo()
 }, 300)
 function moverSerpiente(){
+    let nuevaCabeza = {
+        x: serpiente[0].x,
+        y: serpiente[0].y
+    }
     switch(direccion){
         case "derecha":
-            moverDerecha()
+            nuevaCabeza.x++
             break
         case "izquierda":
-            moverIzquierda()
+            nuevaCabeza.x--
             break
         case "arriba":
-            moverArriba()
+            nuevaCabeza.y--
             break
         case "abajo":
-            moverAbajo()
+            nuevaCabeza.y++
             break
+    }
+    serpiente.unshift(nuevaCabeza)
+    if(!comidaAtrapada()){
+        serpiente.pop()
     }
 }
 window.addEventListener("keydown",(event)=>{
@@ -95,3 +105,9 @@ window.addEventListener("keydown",(event)=>{
             break
     }
 })
+function dibujarComida(){
+    pintarCoordenada(comida.x, comida.y, "green")
+}
+function comidaAtrapada(){
+    return serpiente[0].x === comida.x && serpiente[0].y === comida.y
+}
