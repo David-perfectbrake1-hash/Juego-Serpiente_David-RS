@@ -10,3 +10,8 @@ function pintarCoordenada(x,y,color){
 function limpiarCanvas(){
     ctx.clearRect(0,0,canvas.width,canvas.height)
 }
+const serpiente = [{x: 10, y: 10}]
+function dibujarSerpiente(){
+    const cabeza = serpiente[0]
+    pintarCoordenada(cabeza.x,cabeza.y,"red")
+}
