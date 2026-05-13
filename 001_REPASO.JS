@@ -3,6 +3,7 @@ const canvas = document.getElementById("canvasJuego")
 const ctx = canvas.getContext("2d")
 let serpiente = [{x: 10, y: 10}]
 let intervaloSerpiente
+let direccion = "derecha"
 function pintarCoordenada(x,y,color){
     let pixelX = x*TAMANIO_CELDA
     let pixelY = y*TAMANIO_CELDA
@@ -56,6 +57,41 @@ function moverAbajo(){
     serpiente.pop()
 }
 intervaloSerpiente = setInterval(()=>{
-    moverDerecha()
+    moverSerpiente()
     dibujarTodo()
 }, 300)
+function moverSerpiente(){
+    switch(direccion){
+        case "derecha":
+            moverDerecha()
+            break
+        case "izquierda":
+            moverIzquierda()
+            break
+        case "arriba":
+            moverArriba()
+            break
+        case "abajo":
+            moverAbajo()
+            break
+    }
+}
+window.addEventListener("keydown",(event)=>{
+    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) {
+        event.preventDefault();
+    }
+    switch(event.key){
+        case "ArrowRight":
+            direccion = "derecha"
+            break
+        case "ArrowLeft":
+            direccion = "izquierda"
+            break
+        case "ArrowUp":
+            direccion = "arriba"
+            break
+        case "ArrowDown":
+            direccion = "abajo"
+            break
+    }
+})
