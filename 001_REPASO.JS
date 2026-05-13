@@ -15,3 +15,7 @@ function dibujarSerpiente(){
     const cabeza = serpiente[0]
     pintarCoordenada(cabeza.x,cabeza.y,"red")
 }
+function dibujarTodo(){
+    limpiarCanvas()
+    dibujarSerpiente()
+}
