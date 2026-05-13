@@ -7,3 +7,6 @@ function pintarCoordenada(x,y,color){
     ctx.fillStyle=color
     ctx.fillRect(pixelX,pixelY,TAMANIO_CELDA,TAMANIO_CELDA)
 }
+function limpiarCanvas(){
+    ctx.clearRect(0,0,canvas.width,canvas.height)
+}
