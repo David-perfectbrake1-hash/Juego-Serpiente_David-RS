@@ -9,6 +9,7 @@ let comida = {x: 5,y: 5}
 let puntaje = 0
 let juegoTerminado = false
 
+dibujarTodo()
 
 function pintarCoordenada(x,y,color){
     let pixelX = x*TAMANIO_CELDA
@@ -94,6 +95,7 @@ function moverDerecha(){
     }
 //unshift: Agrega un nuevo elemento al inicio del arreglo
     serpiente.unshift(nuevaCabeza)
+    serpiente.pop()//Elimina el último elemento del arreglo.
 }
 
 function moverIzquierda(){
@@ -103,6 +105,7 @@ function moverIzquierda(){
     }
 //unshift: Agrega un nuevo elemento al inicio del arreglo
     serpiente.unshift(nuevaCabeza)
+    serpiente.pop()//Elimina el último elemento del arreglo.
 }
 
 function moverArriba(){
@@ -112,6 +115,7 @@ function moverArriba(){
     }
 //unshift: Agrega un nuevo elemento al inicio del arreglo
     serpiente.unshift(nuevaCabeza)
+    serpiente.pop()//Elimina el último elemento del arreglo.
 }
 
 function moverAbajo(){
@@ -121,6 +125,7 @@ function moverAbajo(){
     }
 //unshift: Agrega un nuevo elemento al inicio del arreglo
     serpiente.unshift(nuevaCabeza)
+    serpiente.pop()//Elimina el último elemento del arreglo.
 }
 
 function cambiarDireccion(direccionRecibida) {
@@ -148,16 +153,14 @@ function moverSerpiente(){
     if(comidaAtrapada()){
         aumentarPuntaje()
         regenerarComida()
- 
-    //Quitamos uno para compensar el unshift del switch
-        serpiente.pop()//Elimina el último elemento del arreglo.
-    // PARTE 10.b: Para que crezca usando push
+// Guarda en una variable llamada 'cola'
+// La última posición disponible
+// De la lista llamada 'serpiente' 
         let cola = serpiente[serpiente.length -1 ]
-        let nuevoSegmento = {x: cola.x, y: cola.y}
-        serpiente.push(nuevoSegmento)
-    }else{
-    //Elimina el último elemento del arreglo.
-        serpiente.pop()
+// Crea un objeto nuevo, 
+// mira qué número tiene la cola en su x y dáselo a mi nueva x; 
+// luego mira qué número tiene la cola en su y y dáselo a mi nueva y
+        serpiente.push({ x: cola.x, y: cola.y })
     }
 
     let nuevaCabeza = serpiente[0]
@@ -195,6 +198,7 @@ function aumentarPuntaje(){
 function gameOver(){
     document.getElementById("estado").innerText = "Game Over"
     juegoTerminado = true
+    clearInterval(intervaloSerpiente)
 }
 
 function reiniciarJuego(){
