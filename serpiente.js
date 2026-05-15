@@ -248,27 +248,8 @@ function cambiarDireccion(direccion) {
   direccionActual=direccion
 }
 
-/**
- * Listener para controlar la serpiente con las flechas del teclado
- */
-window.addEventListener("keydown", (evento) => {
-  switch (evento.key) {
-    case "ArrowRight":
-      cambiarDireccion("derecha");
-      break;
-    case "ArrowLeft":
-      cambiarDireccion("izquierda");
-      break;
-    case "ArrowUp":
-      cambiarDireccion("arriba");
-      break;
-    case "ArrowDown":
-      cambiarDireccion("abajo");
-      break;
-  }
-});
-
 function iniciarJuego(){
+  clearInterval(intervaloSerpiente)
   intervaloSerpiente = setInterval(moverSerpiente, 700 - velociadSerpiente )
   cambiarEstado("Jugando")
 }
@@ -358,3 +339,23 @@ function reiniciarJuego(){
   document.getElementById("puntaje").innerText = 0
   puntaje = 0
 }
+
+/**
+ * Listener para controlar la serpiente con las flechas del teclado
+ */
+window.addEventListener("keydown", (evento) => {
+  switch (evento.key) {
+    case "ArrowRight":
+      cambiarDireccion("derecha");
+      break;
+    case "ArrowLeft":
+      cambiarDireccion("izquierda");
+      break;
+    case "ArrowUp":
+      cambiarDireccion("arriba");
+      break;
+    case "ArrowDown":
+      cambiarDireccion("abajo");
+      break;
+  }
+});

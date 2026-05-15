@@ -2,7 +2,7 @@ const TAMANIO_CELDA = 25
 const canvas = document.getElementById("canvasJuego")
 const ctx = canvas.getContext("2d")
 
-let serpiente = [{x: 10, y: 10},{x: 9, y: 10}]
+let serpiente = [{x: 10, y: 10},{x: 9, y: 10}, {x: 8, y: 10}]
 let intervaloSerpiente
 let direccion = "derecha"
 let comida = {x: 5,y: 5}
@@ -87,26 +87,80 @@ function dibujarTodo(){
     dibujarComida()
 }
 
-function moverSerpiente(){
-    if(juegoTerminado) return
+function moverDerecha(){
+    let nuevaCabeza = {
+        x: serpiente[0].x+1,
+        y:serpiente[0].y
+    }
+//unshift: Agrega un nuevo elemento al inicio del arreglo
+    serpiente.unshift(nuevaCabeza)
+}
+
+function moverIzquierda(){
+    let nuevaCabeza = {
+        x: serpiente[0].x-1,
+        y:serpiente[0].y
+    }
+//unshift: Agrega un nuevo elemento al inicio del arreglo
+    serpiente.unshift(nuevaCabeza)
+}
+
+function moverArriba(){
     let nuevaCabeza = {
         x: serpiente[0].x,
-        y: serpiente[0].y
+        y:serpiente[0].y-1
     }
+//unshift: Agrega un nuevo elemento al inicio del arreglo
+    serpiente.unshift(nuevaCabeza)
+}
+
+function moverAbajo(){
+    let nuevaCabeza = {
+        x: serpiente[0].x,
+        y:serpiente[0].y+1
+    }
+//unshift: Agrega un nuevo elemento al inicio del arreglo
+    serpiente.unshift(nuevaCabeza)
+}
+
+function cambiarDireccion(direccionRecibida) {
+  direccion=direccionRecibida
+}
+
+function moverSerpiente(){
+    if(juegoTerminado) return
+    
     switch(direccion){
         case "derecha":
-            nuevaCabeza.x++
+            moverDerecha()
             break
         case "izquierda":
-            nuevaCabeza.x--
+            moverIzquierda()
             break
         case "arriba":
-            nuevaCabeza.y--
+            moverArriba()
             break
         case "abajo":
-            nuevaCabeza.y++
+            moverAbajo()
             break
     }
+
+    if(comidaAtrapada()){
+        aumentarPuntaje()
+        regenerarComida()
+ 
+    //Quitamos uno para compensar el unshift del switch
+        serpiente.pop()//Elimina el último elemento del arreglo.
+    // PARTE 10.b: Para que crezca usando push
+        let cola = serpiente[serpiente.length -1 ]
+        let nuevoSegmento = {x: cola.x, y: cola.y}
+        serpiente.push(nuevoSegmento)
+    }else{
+    //Elimina el último elemento del arreglo.
+        serpiente.pop()
+    }
+
+    let nuevaCabeza = serpiente[0]
     if(
         nuevaCabeza.x < 0 || nuevaCabeza.x >= (canvas.width / TAMANIO_CELDA)
         ||
@@ -115,35 +169,10 @@ function moverSerpiente(){
         gameOver()
         return
     }
-    serpiente.unshift(nuevaCabeza)
-    let atrapada = comidaAtrapada()
-        if(atrapada){
-            regenerarComida()
-            aumentarPuntaje()
-        } else {
-            serpiente.pop()
-        }
-}
 
-window.addEventListener("keydown",(event)=>{
-    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) {
-        event.preventDefault();
-    }
-    switch(event.key){
-        case "ArrowRight":
-            direccion = "derecha"
-            break
-        case "ArrowLeft":
-            direccion = "izquierda"
-            break
-        case "ArrowUp":
-            direccion = "arriba"
-            break
-        case "ArrowDown":
-            direccion = "abajo"
-            break
-    }
-})
+    dibujarTodo()
+
+}
 
 function dibujarComida(){
     pintarCoordenada(comida.x, comida.y, "green")
@@ -168,7 +197,52 @@ function gameOver(){
     juegoTerminado = true
 }
 
-intervaloSerpiente = setInterval(()=>{
-    moverSerpiente()
+function reiniciarJuego(){
+    clearInterval(intervaloSerpiente)
+    
+    serpiente = [{x: 10, y: 10},{x: 9, y: 10}, {x: 8, y: 10}]
+    direccion = "derecha"
+    juegoTerminado = false
+    puntaje = 0
+
+    document.getElementById("puntaje").innerText = 0
+    document.getElementById("estado").innerText = "Listo"
+    
+    regenerarComida()
     dibujarTodo()
-}, 300)
+}
+
+function iniciarJuego(){
+    document.getElementById("estado").innerText = "Jugando"
+    clearInterval(intervaloSerpiente)
+    intervaloSerpiente = setInterval(()=>{
+    moverSerpiente()
+    }, 300)
+}
+
+function pausarJuego(){
+    clearInterval(intervaloSerpiente)
+    document.getElementById("estado").innerText = "Pausado"
+}
+
+window.addEventListener("keydown",(event)=>{
+    if (
+        ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)
+    ) {
+        event.preventDefault();
+    }
+    switch(event.key){
+        case "ArrowRight": 
+            cambiarDireccion("derecha") 
+            break
+        case "ArrowLeft":  
+            cambiarDireccion("izquierda") 
+            break
+        case "ArrowUp":    
+            cambiarDireccion("arriba") 
+            break
+        case "ArrowDown":  
+            cambiarDireccion("abajo") 
+            break
+    }
+})
