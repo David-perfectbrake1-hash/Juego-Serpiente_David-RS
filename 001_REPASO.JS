@@ -8,6 +8,7 @@ let direccion = "derecha"
 let comida = {x: 5,y: 5}
 let puntaje = 0
 let juegoTerminado = false
+let velocidad = 300
 
 dibujarTodo()
 
@@ -128,8 +129,13 @@ function moverAbajo(){
     serpiente.pop()//Elimina el último elemento del arreglo.
 }
 
-function cambiarDireccion(direccionRecibida) {
-  direccion=direccionRecibida
+function cambiarDireccion(nuevaDireccion) {
+    // Evitar que la serpiente retroceda sobre sí misma
+    if (direccion === "derecha" && nuevaDireccion === "izquierda") return;
+    if (direccion === "izquierda" && nuevaDireccion === "derecha") return;
+    if (direccion === "arriba" && nuevaDireccion === "abajo") return;
+    if (direccion === "abajo" && nuevaDireccion === "arriba") return;
+    direccion = nuevaDireccion;
 }
 
 function moverSerpiente(){
@@ -164,10 +170,11 @@ function moverSerpiente(){
     }
 
     let nuevaCabeza = serpiente[0]
+    // Si la cabeza ha sobrepasado los límites
     if(
-        nuevaCabeza.x < 0 || nuevaCabeza.x >= (canvas.width / TAMANIO_CELDA)
+        nuevaCabeza.x < 0 || nuevaCabeza.x >= (canvas.width / TAMANIO_CELDA)// Bordes izquierdo y derecho
         ||
-        nuevaCabeza.y < 0 || nuevaCabeza.y >= (canvas.height / TAMANIO_CELDA)
+        nuevaCabeza.y < 0 || nuevaCabeza.y >= (canvas.height / TAMANIO_CELDA)// Bordes superior e inferior
     ){
         gameOver()
         return
@@ -193,11 +200,17 @@ function regenerarComida(){
 function aumentarPuntaje(){
     puntaje++
     document.getElementById("puntaje").innerText = puntaje
+
+    // Aumentar la velocidad (reduciendo el tiempo)
+    if(puntaje % 2 === 0){
+        velocidad -= 50 
+        iniciarJuego()
+    }
 }
 
 function gameOver(){
     document.getElementById("estado").innerText = "Game Over"
-    juegoTerminado = true
+    juegoTerminado = true // Cambia el estado para detener movimientos futuros
     clearInterval(intervaloSerpiente)
 }
 
@@ -208,6 +221,7 @@ function reiniciarJuego(){
     direccion = "derecha"
     juegoTerminado = false
     puntaje = 0
+    velocidad = 300
 
     document.getElementById("puntaje").innerText = 0
     document.getElementById("estado").innerText = "Listo"
@@ -221,7 +235,7 @@ function iniciarJuego(){
     clearInterval(intervaloSerpiente)
     intervaloSerpiente = setInterval(()=>{
     moverSerpiente()
-    }, 300)
+    }, velocidad)
 }
 
 function pausarJuego(){
