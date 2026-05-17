@@ -10,6 +10,7 @@ let comida = {x: 5,y: 5}
 let puntaje = 0
 let juegoTerminado = false
 let velocidad = 300
+let velocidadBase = 300
 let segundosTranscurridos = 0
 let intervaloTiempo
 
@@ -221,6 +222,7 @@ function cambiarDireccion(nuevaDireccion) {
 
 function configurarDificultad(ms) {
     velocidad = ms
+    velocidadBase = ms
     let nivel = ""
     if(ms === 300) nivel = "Fácil"
     else if(ms === 150) nivel = "Medio"
@@ -356,7 +358,7 @@ function reiniciarJuego(){
     direccion = "derecha"
     juegoTerminado = false
     puntaje = 0
-    // No reseteamos la velocidad aquí para que mantenga la dificultad elegida
+    velocidad = velocidadBase
     
     segundosTranscurridos = 0
     document.getElementById("tiempo").innerText = "00:00"
