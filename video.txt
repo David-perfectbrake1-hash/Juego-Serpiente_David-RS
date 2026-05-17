@@ -1,0 +1,12 @@
+VIDEO EXPLICATIVO - JUEGO DE LA SERPIENTE (PARTE 4)
+==================================================
+Autor: David_RS
+
+LINK DEL VIDEO:
+https://institutomovilis-my.sharepoint.com/:v:/g/personal/da_rivera_movilis_edu_ec/IQDqrZ345fWGQri4cdyW8nb7AcsNJAEBIzFFmM3drP8YitU?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D&e=gJoff3
+
+DETALLE DEL VIDEO:
+- Lógica de GAME OVER por colisión con bordes
+- Función de reinicio de partida (limpieza y restauración de estado)
+- Variable de velocidad dinámica y aceleración por puntaje
+- Extras implementados: cronómetro, bloqueo de autogiro, mensajes en canvas
