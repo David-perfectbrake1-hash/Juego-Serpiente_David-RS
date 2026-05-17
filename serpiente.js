@@ -1,361 +1,421 @@
-// ============================================================================
-// 🎮 CONFIGURACIÓN Y CONSTANTES
-// ============================================================================
-const TAMANIO_CELDA = 25;
+// serpiente.js
+const TAMANIO_CELDA = 25
+const canvas = document.getElementById("canvasJuego")
+const ctx = canvas.getContext("2d")
 
-// ============================================================================
-// 🖼️ ELEMENTOS DEL DOM Y CONTEXTO
-// ============================================================================
-const canvas = document.getElementById("canvasJuego");
-const ctx = canvas.getContext("2d");
-
-// ============================================================================
-// 🐍 ESTADO DEL JUEGO
-// ============================================================================
-let serpiente = [
-  { x: 14, y: 13 },
-  { x: 14, y: 14 },
-  { x: 14, y: 15 },
-  { x: 14, y: 16 },
-  { x: 14, y: 17 }
-];
-let intervaloSerpiente;
-let direccionActual = "derecha";
-
-let comida = { x: 4, y: 4 };
-
+let serpiente = [{x: 10, y: 10},{x: 9, y: 10}, {x: 8, y: 10}]
+let intervaloSerpiente
+let direccion = "derecha"
+let comida = {x: 5,y: 5}
 let puntaje = 0
-
 let juegoTerminado = false
+let velocidad = 300
+let velocidadBase = 300
+let segundosTranscurridos = 0
+let intervaloTiempo
 
-let velociadSerpiente = 300
+const mensajeElemento = document.getElementById("mensaje")
 
-// ============================================================================
-// 🚀 INICIALIZACIÓN
-// ============================================================================
-// Primera pintura del juego al cargar la página
-dibujarTodo();
+dibujarTodo()
 
-// ============================================================================
-// 🎨 FUNCIONES DE DIBUJO
-// ============================================================================
-
-/**
- * Función principal de renderizado
- */
-function dibujarTodo() {
-  limpiarCanvas();
-  dibujarTablero();
-  dibujarComida()
-  dibujarSerpiente();
-  //PRUEBAS IMPLEMENTADAS
-  // pintarCoordenada(5, 5, "orange")  
-  // pintarCoordenada(10, 2, "orange") 
-  // pintarCoordenada(0, 25, "orange")  
-  // pintarCoordenada(25, 10, "orange") 
-  // pintarCoordenada(0, 10, "orange")  
-  // pintarCoordenada(25, 25, "orange")
+function pintarCoordenada(x,y,color){
+    let pixelX = x*TAMANIO_CELDA
+    let pixelY = y*TAMANIO_CELDA
+    ctx.fillStyle=color
+    ctx.fillRect(pixelX,pixelY,TAMANIO_CELDA,TAMANIO_CELDA)
 }
 
-/**
- * Limpia completamente el canvas
- */
-function limpiarCanvas() {
-  // 0, 0: Empieza a borrar desde la esquina superior izquierda
-  // canvas.width, canvas.height: Borra hasta el ancho y alto total
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+function limpiarCanvas(){
+    ctx.clearRect(0,0,canvas.width,canvas.height)
 }
 
-/**
- * Dibuja el tablero completo (líneas y números)
- */
-function dibujarTablero() {
-  dibujarLineasVerticales();
-  dibujarLineasHorizontales();
-  dibujarNumerosEnY();
-  dibujarNumerosEnX();
+function dibujarSerpiente(){
+    for(let i=0; i<serpiente.length; i++){
+        const segmento = serpiente[i]
+        const color = (i===0) ? "red" : "yellow"
+        pintarCoordenada(segmento.x,segmento.y,color)
+    }
 }
 
-/**
- * Dibuja las líneas verticales de la cuadrícula
- */
-function dibujarLineasVerticales() {
-  for (let x = 0; x <= canvas.width; x += TAMANIO_CELDA) {
-    ctx.strokeStyle = "white";
-    ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, canvas.height);
-    ctx.stroke();
-  }
+function dibujarLineasVerticales(){
+    for(let x = 0; x <= canvas.width; x += TAMANIO_CELDA){
+        ctx.strokeStyle = "purple"
+        ctx.beginPath()
+        ctx.moveTo(x,0)
+        ctx.lineTo(x,canvas.height)
+        ctx.stroke()
+    }
 }
 
-/**
- * Dibuja las líneas horizontales de la cuadrícula
- */
-function dibujarLineasHorizontales() {
-  for (let y = 0; y <= canvas.height; y += TAMANIO_CELDA) {
-    ctx.strokeStyle = "white";
-    ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(canvas.width, y);
-    ctx.stroke();
-  }
+function dibujarLineasHorizontales(){
+    for(let y = 0; y <= canvas.height; y+= TAMANIO_CELDA){
+        ctx.strokeStyle = "purple"
+        ctx.beginPath()
+        ctx.moveTo(0,y)
+        ctx.lineTo(canvas.width,y)
+        ctx.stroke()
+    }
 }
 
-/**
- * Dibuja los números en el eje Y (izquierda)
- */
-function dibujarNumerosEnY() {
-  ctx.fillStyle = "white";
-  ctx.font = "12px Arial";
-  let contador = 0;
-  
-  for (let y = 0; y <= canvas.height; y += TAMANIO_CELDA) {
-    ctx.fillText(contador, 5, y + 12);
-    contador++;
-  }
+function dibujarTablero(){
+    dibujarLineasVerticales()
+    dibujarLineasHorizontales()
+    dibujarNumerosEnY()
+    dibujarNumerosEnX()
 }
 
-/**
- * Dibuja los números en el eje X (superior)
- */
-function dibujarNumerosEnX() {
-  ctx.fillStyle = "white";
-  ctx.font = "12px Arial";
-  let contador = 0;
-  
-  for (let x = 0; x <= canvas.width; x += TAMANIO_CELDA) {
-    ctx.fillText(contador, x + 2, 12);
-    contador++;
-  }
+function dibujarNumerosEnY(){
+    ctx.fillStyle="white"
+    ctx.font="12px Arial"
+    ctx.textBaseline = "middle"
+    ctx.textAlign = "center"
+
+    let numeroCelda = 0
+    for(let y=0; y <= canvas.height; y+= TAMANIO_CELDA){
+        ctx.fillText(numeroCelda, (TAMANIO_CELDA/2), y + (TAMANIO_CELDA/2) )
+        numeroCelda++
+    }
 }
 
-/**
- * Pinta una celda en coordenadas lógicas (x, y)
- * @param {number} x - Coordenada X lógica
- * @param {number} y - Coordenada Y lógica
- * @param {string} color - Color de relleno
- */
-function pintarCoordenada(x, y, color) {
-  const posicionX = x * TAMANIO_CELDA;
-  const posicionY = y * TAMANIO_CELDA;
-
-  if (posicionX < canvas.width && posicionY < canvas.height) {
-    ctx.fillStyle = color;
-    ctx.fillRect(posicionX, posicionY, TAMANIO_CELDA, TAMANIO_CELDA);
-
-    ctx.strokeStyle = "red";
-    ctx.strokeRect(posicionX, posicionY, TAMANIO_CELDA, TAMANIO_CELDA);
-  }
+function dibujarNumerosEnX(){
+    ctx.fillStyle="white"
+    ctx.font="12px Arial"
+    ctx.textBaseline = "middle"
+    ctx.textAlign = "center"
+    
+    let numeroCelda = 0
+    for(let x=0; x <= canvas.width; x+= TAMANIO_CELDA){
+        ctx.fillText(numeroCelda, x + (TAMANIO_CELDA/2), (TAMANIO_CELDA/2) )
+        numeroCelda++
+    }
 }
 
-/**
- * Dibuja la serpiente completa
- */
-function dibujarSerpiente() {
-  const colorCabeza = "red";
-  
-  for (let i = 0; i < serpiente.length; i++) {
-    const serp = serpiente[i];
-    const color = (i === 0) ? colorCabeza : "yellow";
-    pintarCoordenada(serp.x, serp.y, color);
-  }
+function dibujarMensajeInicio(){
+    // Fondo
+    ctx.fillStyle = "rgba(0, 0, 0, 0.91)"  // ← Un poco más opaco
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    
+    // Contorno para todos los textos
+    ctx.strokeStyle = "black"  // Color del borde
+    ctx.lineWidth = 3          // Grosor del borde
+    
+    // === TÍTULO PRINCIPAL ===
+    ctx.fillStyle = "#22c55e"
+    ctx.font = "bold 24px Arial" 
+    ctx.textAlign = "center"
+    ctx.textBaseline = "middle"
+    
+    // Primero el contorno, luego el relleno
+    ctx.strokeText("🐍 JUEGO DE LA SERPIENTE", canvas.width/2, canvas.height/2 - 60)
+    ctx.fillText("🐍 JUEGO DE LA SERPIENTE", canvas.width/2, canvas.height/2 - 60)
+    
+    // === INSTRUCCIONES ===
+    ctx.fillStyle = "white"
+    ctx.font = "18px Arial"
+    ctx.strokeText("Usa las flechas ⬆️⬇️⬅️➡️ para moverte", canvas.width/2, canvas.height/2 + 10)
+    ctx.fillText("Usa las flechas ⬆️⬇️⬅️➡️ para moverte", canvas.width/2, canvas.height/2 + 10)
+    
+    // === MENSAJE DE ACCIÓN ===
+    ctx.fillStyle = "#facc15"
+    ctx.font = "bold 20px Arial"
+    ctx.strokeText("¡Presiona INICIAR para comenzar!", canvas.width/2, canvas.height/2 + 50)
+    ctx.fillText("¡Presiona INICIAR para comenzar!", canvas.width/2, canvas.height/2 + 50)
+
+    // === NIVEL ===
+    ctx.fillStyle = "#00ff0d"
+    ctx.font = "14px Arial"
+    ctx.strokeText("Selecciona un NIVEL de dificultad arriba 👆", canvas.width/2, canvas.height/2 + 90)
+    ctx.fillText("Selecciona un NIVEL de dificultad arriba 👆", canvas.width/2, canvas.height/2 + 90)
 }
 
-// ============================================================================
-// 🕹️ FUNCIONES DE MOVIMIENTO
-// ============================================================================
-
-/**
- * Mueve la serpiente hacia la derecha
- */
-function moverDerecha() {
-  let nuevoElemento = { x: 0, y: 0 };
-  if ((serpiente[0].x + 2) * TAMANIO_CELDA > canvas.width) {
-    gameOver()
-    return;
-  }
-  nuevoElemento.x=serpiente[0].x+1
-  nuevoElemento.y=serpiente[0].y
-
-  serpiente.unshift(nuevoElemento)
-  serpiente.pop()
+function dibujarMensajePausa(){
+    // Fondo
+    ctx.fillStyle = "rgba(0, 0, 0, 0.90)"
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    
+    // Configurar contorno para todos los textos
+    ctx.strokeStyle = "black"   // Color del borde
+    ctx.lineWidth = 2           // Grosor del borde
+    
+    // Mensaje principal "JUEGO PAUSADO"
+    ctx.fillStyle = "red"
+    ctx.font = "bold 24px Arial"  // ← Reducido de 30px a 24px para que quepa bien
+    ctx.textAlign = "center"
+    ctx.textBaseline = "middle"
+    
+    // Primero el contorno, luego el relleno (¡orden importante!)
+    ctx.strokeText("⏸️ JUEGO PAUSADO", canvas.width/2, canvas.height/2)
+    ctx.fillText("⏸️ JUEGO PAUSADO", canvas.width/2, canvas.height/2)
+    
+    // Instrucción secundaria
+    ctx.fillStyle = "#eeff00"  // Gris claro
+    ctx.font = "16px Arial"
+    
+    ctx.strokeText("Presiona INICIAR para continuar", canvas.width/2, canvas.height/2 + 40)
+    ctx.fillText("Presiona INICIAR para continuar", canvas.width/2, canvas.height/2 + 40)
 }
 
-/**
- * Mueve la serpiente hacia la izquierda
- */
-function moverIzquierda() {
-  let nuevoElemento = { x: 0, y: 0 };
-  
-  if ((serpiente[0].x - 1) * TAMANIO_CELDA < 0) {
-    gameOver()
-    return;
-  }
-  nuevoElemento.x=serpiente[0].x-1
-  nuevoElemento.y=serpiente[0].y
+function dibujarTodo(){
+    limpiarCanvas()
+    dibujarTablero()
+    dibujarSerpiente()
+    dibujarComida()
 
-  serpiente.unshift(nuevoElemento)
-  serpiente.pop()
+    let estadoActual = document.getElementById("estado").innerText
+
+    if(estadoActual === "Listo"){
+        dibujarMensajeInicio()
+    }
+    else if(estadoActual === "Pausado"){
+        dibujarMensajePausa()
+    }
 }
 
-/**
- * Mueve la serpiente hacia abajo
- */
-function moverAbajo() {
-  let nuevoElemento = { x: 0, y: 0 };
-  
-  if ((serpiente[0].y + 2) * TAMANIO_CELDA > canvas.height){
-    gameOver()
-    return;
-  }
-  
-  nuevoElemento.x=serpiente[0].x
-  nuevoElemento.y=serpiente[0].y+1
-
-  serpiente.unshift(nuevoElemento)
-  serpiente.pop()
-  
+function moverDerecha(){
+    let nuevaCabeza = {
+        x: serpiente[0].x+1,
+        y:serpiente[0].y
+    }
+//unshift: Agrega un nuevo elemento al inicio del arreglo
+    serpiente.unshift(nuevaCabeza)
+    serpiente.pop()//Elimina el último elemento del arreglo.
 }
 
-/**
- * Mueve la serpiente hacia arriba
- */
-function moverArriba() {
-  let nuevoElemento = { x: 0, y: 0 };
-  
-  if ((serpiente[0].y - 1) * TAMANIO_CELDA < 0){
-    gameOver()
-    return;
-  } 
-  
-  nuevoElemento.x=serpiente[0].x
-  nuevoElemento.y=serpiente[0].y-1
-
-  serpiente.unshift(nuevoElemento)
-  serpiente.pop()
+function moverIzquierda(){
+    let nuevaCabeza = {
+        x: serpiente[0].x-1,
+        y:serpiente[0].y
+    }
+//unshift: Agrega un nuevo elemento al inicio del arreglo
+    serpiente.unshift(nuevaCabeza)
+    serpiente.pop()//Elimina el último elemento del arreglo.
 }
 
-// ============================================================================
-// 🎮 CONTROL DE DIRECCIÓN Y EVENTOS
-// ============================================================================
-
-/**
- * Cambia la dirección de la serpiente y redibuja
- * @param {string} direccion - "derecha" | "izquierda" | "abajo" | "arriba"
- */
-function cambiarDireccion(direccion) {
-  direccionActual=direccion
+function moverArriba(){
+    let nuevaCabeza = {
+        x: serpiente[0].x,
+        y:serpiente[0].y-1
+    }
+//unshift: Agrega un nuevo elemento al inicio del arreglo
+    serpiente.unshift(nuevaCabeza)
+    serpiente.pop()//Elimina el último elemento del arreglo.
 }
 
-function iniciarJuego(){
-  clearInterval(intervaloSerpiente)
-  intervaloSerpiente = setInterval(moverSerpiente, 700 - velociadSerpiente )
-  cambiarEstado("Jugando")
+function moverAbajo(){
+    let nuevaCabeza = {
+        x: serpiente[0].x,
+        y:serpiente[0].y+1
+    }
+//unshift: Agrega un nuevo elemento al inicio del arreglo
+    serpiente.unshift(nuevaCabeza)
+    serpiente.pop()//Elimina el último elemento del arreglo.
 }
 
-function pausarJuego(){
-  clearInterval(intervaloSerpiente)
-  cambiarEstado("Descanzando")
+function cambiarDireccion(nuevaDireccion) {
+    // Evitar que la serpiente retroceda sobre sí misma
+    if (direccion === "derecha" && nuevaDireccion === "izquierda") return;
+    if (direccion === "izquierda" && nuevaDireccion === "derecha") return;
+    if (direccion === "arriba" && nuevaDireccion === "abajo") return;
+    if (direccion === "abajo" && nuevaDireccion === "arriba") return;
+    direccion = nuevaDireccion;
 }
 
-function moverSerpiente(){ 
-  if(juegoTerminado) return
-  let atrapada = comidaAtrapada()
-  switch (direccionActual) {
-    case "derecha":
-      moverDerecha();
-      break;
-    case "izquierda":
-      moverIzquierda();
-      break;
-    case "abajo":
-      moverAbajo();
-      break;
-    case "arriba":
-      moverArriba();
-      break;
-  }
-  if(atrapada){
-    serpiente.push(comida) 
-    aumentarPuntaje()
-    generarNuevaPosicionComida()
-  }
-  dibujarTodo();
+function configurarDificultad(ms) {
+    velocidad = ms
+    velocidadBase = ms
+    let nivel = ""
+    if(ms === 300) nivel = "Fácil"
+    else if(ms === 150) nivel = "Medio"
+    else if(ms === 50) nivel = "Difícil"
+    
+    mensajeElemento.innerText = "Dificultad: " + nivel + ". ¡Presiona INICIAR!"
 }
 
-function dibujarComida() {
-  pintarCoordenada(comida.x, comida.y, "green");
+function moverSerpiente(){
+    if(juegoTerminado) return
+    
+    switch(direccion){
+        case "derecha":
+            moverDerecha()
+            break
+        case "izquierda":
+            moverIzquierda()
+            break
+        case "arriba":
+            moverArriba()
+            break
+        case "abajo":
+            moverAbajo()
+            break
+    }
+
+    for (let i = 1; i < serpiente.length; i++) {
+        if (serpiente[0].x === serpiente[i].x && serpiente[0].y === serpiente[i].y) {
+            gameOver()
+            return 
+        }
+    }
+
+    if(comidaAtrapada()){
+        aumentarPuntaje()
+        regenerarComida()
+// Guarda en una variable llamada 'cola'
+// La última posición disponible
+// De la lista llamada 'serpiente' 
+        let cola = serpiente[serpiente.length -1 ]
+// Crea un objeto nuevo, 
+// mira qué número tiene la cola en su x y dáselo a mi nueva x; 
+// luego mira qué número tiene la cola en su y y dáselo a mi nueva y
+        serpiente.push({ x: cola.x, y: cola.y })
+    }
+
+    let nuevaCabeza = serpiente[0]
+    // Si la cabeza ha sobrepasado los límites
+    if(
+        nuevaCabeza.x < 0 || nuevaCabeza.x >= (canvas.width / TAMANIO_CELDA)// Bordes izquierdo y derecho
+        ||
+        nuevaCabeza.y < 0 || nuevaCabeza.y >= (canvas.height / TAMANIO_CELDA)// Bordes superior e inferior
+    ){
+        gameOver()
+        return
+    }
+
+    dibujarTodo()
+
 }
 
-function generarNuevaPosicionComida() {
-  comida.x = Math.floor(Math.random() * (canvas.width / TAMANIO_CELDA));
-  comida.y = Math.floor(Math.random() * (canvas.height / TAMANIO_CELDA));
+function dibujarComida(){
+    pintarCoordenada(comida.x, comida.y, "green")
 }
 
 function comidaAtrapada(){
-  if(comida.x == serpiente[0].x && serpiente[0].y == comida.y)
-    return true
-  else 
-    return false
+    return serpiente[0].x === comida.x && serpiente[0].y === comida.y
+}
+
+function regenerarComida(){
+    comida.x = Math.floor(Math.random() * (canvas.width / TAMANIO_CELDA))
+    comida.y = Math.floor(Math.random() * (canvas.height / TAMANIO_CELDA))
 }
 
 function aumentarPuntaje(){
-  puntaje++
-  if(puntaje % 2 == 0 && velociadSerpiente <= 600){
-    velociadSerpiente += 50
-    clearInterval(intervaloSerpiente)
-    intervaloSerpiente = setInterval(moverSerpiente, 700-velociadSerpiente)
-  }
-  document.getElementById("puntaje").innerText = puntaje
+    puntaje++
+    document.getElementById("puntaje").innerText = puntaje
+
+    // Aumentar velocidad cada 2 puntos
+    if(puntaje % 2 === 0){
+        
+        // Si la velocidad es mayor a 50, reducimos de 50 en 50
+        if(velocidad > 50){
+            velocidad = velocidad - 50
+        } 
+        // Si la velocidad está entre 11 y 50, reducimos de 10 en 10
+        else if(velocidad > 10){
+            velocidad = velocidad - 10
+        } 
+        // Si ya llegamos a 10, nos quedamos ahí (no bajamos más)
+        else {
+            velocidad = 10
+        }
+        
+        iniciarJuego()
+    }
 }
 
-function cambiarEstado(estado){
-  document.getElementById("estado").innerText = estado
+function actualizarTiempo(){
+    // Sumar 1 segundo cada vez que se llama esta función
+    segundosTranscurridos++
+    
+    // Calcular minutos y segundos
+    let minutos = Math.floor(segundosTranscurridos / 60)
+    let segundos = segundosTranscurridos % 60
+    
+    // Agregar un cero adelante si es menor a 10 (ej: 05 en vez de 5)
+    if(minutos < 10){
+        minutos = "0" + minutos
+    }
+    if(segundos < 10){
+        segundos = "0" + segundos
+    }
+    
+    // Mostrar en pantalla
+    document.getElementById("tiempo").innerText = minutos + ":" + segundos
 }
 
 function gameOver(){
-  juegoTerminado = true
-  cambiarEstado("Game Over")
+    document.getElementById("estado").innerText = "Game Over"
+    mensajeElemento.innerText = "¡Chocaste! Presiona REINICIAR para intentar de nuevo"
+    juegoTerminado = true // Cambia el estado para detener movimientos futuros
+    clearInterval(intervaloSerpiente)
+    clearInterval(intervaloTiempo)
 }
 
 function reiniciarJuego(){
-  limpiarCanvas()
-  dibujarTablero()
-  serpiente = [
-    { x: 14, y: 13 },
-    { x: 14, y: 14 },
-    { x: 14, y: 15 },
-    { x: 14, y: 16 },
-    { x: 14, y: 17 }
-  ]
-  direccionActual = "derecha"
-  cambiarEstado("Listo")
-  juegoTerminado = false
-  clearInterval(intervaloSerpiente)
-  dibujarComida()
-  dibujarSerpiente()
-  velociadSerpiente = 300
-  document.getElementById("puntaje").innerText = 0
-  puntaje = 0
+    clearInterval(intervaloSerpiente)
+    clearInterval(intervaloTiempo)
+    mensajeElemento.innerText = "Elige dificultad o presiona INICIAR"
+    
+    serpiente = [{x: 10, y: 10},{x: 9, y: 10}, {x: 8, y: 10}]
+    direccion = "derecha"
+    juegoTerminado = false
+    puntaje = 0
+    velocidad = velocidadBase
+    
+    segundosTranscurridos = 0
+    document.getElementById("tiempo").innerText = "00:00"
+    
+    document.getElementById("puntaje").innerText = 0
+    document.getElementById("estado").innerText = "Listo"
+    
+    regenerarComida()
+    dibujarTodo()
 }
 
-/**
- * Listener para controlar la serpiente con las flechas del teclado
- */
-window.addEventListener("keydown", (evento) => {
-  switch (evento.key) {
-    case "ArrowRight":
-      cambiarDireccion("derecha");
-      break;
-    case "ArrowLeft":
-      cambiarDireccion("izquierda");
-      break;
-    case "ArrowUp":
-      cambiarDireccion("arriba");
-      break;
-    case "ArrowDown":
-      cambiarDireccion("abajo");
-      break;
-  }
-});
+function iniciarJuego(){
+    if(juegoTerminado){
+        juegoTerminado = false
+    }
+    
+    mensajeElemento.innerText = "¡Juego en marcha! Usa las flechas 🐍"
+    document.getElementById("estado").innerText = "Jugando"
+
+    clearInterval(intervaloSerpiente)
+    intervaloSerpiente = setInterval(()=>{
+    moverSerpiente()
+    }, velocidad)
+
+    clearInterval(intervaloTiempo)
+    intervaloTiempo = setInterval(() => {
+        actualizarTiempo()
+    }, 1000)
+}
+
+function pausarJuego(){
+    clearInterval(intervaloSerpiente)
+    clearInterval(intervaloTiempo)
+
+    document.getElementById("estado").innerText = "Pausado"
+
+    dibujarTodo()
+}
+
+window.addEventListener("keydown",(event)=>{
+    if (
+        ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)
+    ) {
+        event.preventDefault();
+    }
+    switch(event.key){
+        case "ArrowRight": 
+            cambiarDireccion("derecha") 
+            break
+        case "ArrowLeft":  
+            cambiarDireccion("izquierda") 
+            break
+        case "ArrowUp":    
+            cambiarDireccion("arriba") 
+            break
+        case "ArrowDown":  
+            cambiarDireccion("abajo") 
+            break
+    }
+})
