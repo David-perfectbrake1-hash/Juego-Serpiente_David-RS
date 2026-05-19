@@ -213,6 +213,28 @@ function moverAbajo(){
 
 function cambiarDireccion(nuevaDireccion) {
     // Evitar que la serpiente retroceda sobre sí misma
+    /*
+    EXAMEN
+    Implementar una validación que impida que la serpiente se mueva en la dirección opuesta a la actual.
+
+    La lógica implementada trabaja mediante tres componentes de JavaScript:
+    
+    El Condicional (if): 
+    Pregunta. 
+    si la dirección actual (direccion)
+        y la tecla presionada (nuevaDireccion)
+        son opuestas
+    Si la respuesta es sí, ejecuta el return para congelar la función; 
+    si es no, deja pasar el código a la siguiente línea.
+
+    La Comparación Estricta (===): 
+    Garantiza que el texto guardado en la memoria coincida exactamente con la dirección analizada 
+    (por ejemplo, que "derecha" sea exactamente igual a "derecha"), evitando errores de lectura.
+
+    El Operador Lógico AND (&&): 
+    Obliga a que ambas condiciones se cumplan al mismo tiempo. 
+    La lógica solo se activa si, además, intentas presionar la izquierda en ese preciso instante.
+    */
     if (direccion === "derecha" && nuevaDireccion === "izquierda") return;
     if (direccion === "izquierda" && nuevaDireccion === "derecha") return;
     if (direccion === "arriba" && nuevaDireccion === "abajo") return;
